@@ -21,31 +21,37 @@ module.exports = NodeHelper.create({
       self.config = payload
 
       for (var curUsbDev in self.config.devices){
-        console.log("Creating port for usb dev: "+curUsbDev)
-        self.config.devices[curUsbDev].port = new SerialPort(curUsbDev,{
-          baudRate: 9600,
-        })
-
-      self.config.devices[curUsbDev].parser = self.config.devices[curUsbDev].port.pipe(new Readline({ delimiter: '\n' }))
-      self.config.devices[curUsbDev].parser.on("data", function(data){
-        for(var curExptMessage in self.config.devices[curUsbDev].messages){
-          if(data.indexOf(curExptMessage) == 0){
-            for(var curNotification in self.config.devices[curUsbDev].messages[curExptMessage]){
-              if(typeof self.config.devices[curUsbDev].messages[curExptMessage][curNotification].notification !== 'undefined'){
-                if(typeof self.config.devices[curUsbDev].messages[curExptMessage][curNotification].payload === 'undefined'){
-                  var payload = {}
-                  } else {
-                    var payload = self.config.devices[curUsbDev].messages[curExptMessage][curNotification].payload
-                  }
-                  self.sendSocketNotification(self.config.devices[curUsbDev].messages[curExptMessage][curNotification].notification,payload)
-                }
-              }
-            }
-          }
-        });
+        (function(innerDev){
+          console.log("Creating port for usb dev: "+innerDev)
+          curPort = new SerialPort(innerDev,{
+            baudRate: 9600,
+          })
+          curParser = curPort.pipe(new Readline({ delimiter: '\n' }))
+          curParser.on("data", function(data){
+            self.sendAllNotifications(innerDev, data)
+          });
+        })(curUsbDev)
+        
       }
-
       self.started = true
     }
-  }
+  },
+
+  sendAllNotifications: function (curDev, curData) {
+    const self = this
+    for(var curExptMessage in self.config.devices[curDev].messages){
+      if(curData.indexOf(curExptMessage) == 0){
+        for(var curNotification in self.config.devices[curDev].messages[curExptMessage]){
+          if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].notification !== 'undefined'){
+            if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payload === 'undefined'){
+              var payload = {}
+            } else {
+              var payload = self.config.devices[curDev].messages[curExptMessage][curNotification].payload
+            }
+            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,payload)
+          }
+        }
+      }
+    }
+  },
 })
