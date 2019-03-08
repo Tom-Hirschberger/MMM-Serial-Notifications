@@ -6,15 +6,17 @@ It watches the serial consoles and sends notifications based on the received mes
 This module is inspired by https://github.com/thobach/MMM-Gestures!
 
 ## Installation
+```sh
   cd ~/MagicMirror/modules
   git clone 
   cd MMM-Serial-Notifications
   npm install
+```
 
 
 ## Configuration
   To use the module insert it in the config.js file. Here is an example:
-
+```js
   {
     module: 'MMM-Serial-Notifications',
     config: {
@@ -50,7 +52,7 @@ This module is inspired by https://github.com/thobach/MMM-Gestures!
       }
     }
   },
-
+```
 
 | Option  | Description | Type | Default |
-| ------- | --- | --- | --- |
+| devices | An Object containing the serial devices, the messages and notifications | Object | {} |
