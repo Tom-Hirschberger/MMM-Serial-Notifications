@@ -54,5 +54,6 @@ This module is inspired by https://github.com/thobach/MMM-Gestures!
   },
 ```
 
-| Option  | Description | Type | Default |
-| devices | An Object containing the serial devices, the messages and notifications | Object | {} |
+| Option  | Description | Type | Default
+|-------- | ----------- | ---- | -------
+| devices | An Object containing the serial devices, the messages and notifications | Object | {}
