@@ -3,7 +3,9 @@ MMM-Serial-Notifications is a module for the [MagicMirror](https://github.com/Mi
 
 It watches the serial consoles and sends notifications based on the received messages;
 
-This module is inspired by https://github.com/thobach/MMM-Gestures!
+This module is inspired by https://github.com/thobach/MMM-Gestures. This module uses a newer version of the "serialport" library and does not need the additional webserver anymore!
+
+The Arduino directory contains examples i had written for my Arduino UNO R3 and my Arduino Mega 2560; the current examples use the APDS-9960 and HC-SR04 sensors to send messages which then will be watched and result in notifications.
 
 ## Installation
 ```sh
@@ -15,7 +17,7 @@ This module is inspired by https://github.com/thobach/MMM-Gestures!
 
 
 ## Configuration
-  To use the module insert it in the config.js file. Here is an example:
+  To use the module insert something like this into the config.js file:
 ```js
   {
     module: 'MMM-Serial-Notifications',
