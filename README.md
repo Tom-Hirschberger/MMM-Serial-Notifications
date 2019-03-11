@@ -10,7 +10,7 @@ The Arduino directory contains examples i had written for my Arduino UNO R3 and 
 ## Installation
 ```sh
   cd ~/MagicMirror/modules
-  git clone 
+  git clone git@github.com:Tom-Hirschberger/MMM-Serial-Notifications.git
   cd MMM-Serial-Notifications
   npm install
 ```
