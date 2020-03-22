@@ -1,0 +1,64 @@
+{
+			module: 'MMM-Serial-Notifications',
+			config: {
+				devices: {
+					'/dev/ard_nano_2': {
+						messages: {
+							'In_Distance (1)': [
+								{
+									notification: 'SCREEN_TOGGLE',
+									payload: {
+										forced: true
+									}
+								},
+								{
+									notification: 'USER_PRESENCE',
+									payload: true
+								}
+							],
+							'In_Distance (2)': [
+								{
+									notification: 'VOLUME_TOGGLE',
+									payload: {
+										faded: true,
+										upDownScale: 8
+									}
+								},
+								{
+									notification: 'USER_PRESENCE',
+									payload: true
+								}
+							],
+						}
+					},
+					'/dev/ard_nano_1': {
+						messages: {
+							'Gesture: RIGHT': [
+								{
+									notification: 'VOLUME_UP',
+									payload: {
+										upDownScale: 5
+									}
+								},
+								{
+									notification: 'USER_PRESENCE',
+									payload: true
+								}
+							],
+							'Gesture: LEFT': [
+								{
+									notification: 'VOLUME_DOWN',
+									payload: {
+										upDownScale: 8
+									}
+								},
+								{
+									notification: 'USER_PRESENCE',
+									payload: true
+								}
+							]
+						}
+					}
+				}
+			}
+		}
