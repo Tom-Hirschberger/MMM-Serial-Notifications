@@ -12,19 +12,14 @@
 
 /*
   Magic Mirror 2.0
-
   Collects gesture events from gesture sensor APDS-9960 which are then forwarded on the serial port as text.
-
   The circuit for an Arduino Uno:
   * input 1: APDS-9960 on digital pin 2 (interrupt) + I2C (SDA on pin A4, SCL on pin A5) + GND & VCC (3.3V)
   * output: serial out on USB
   
   In order to compile you'll need to copy the libraries from above to Arduino's library folder.
-
   Created 2019-02-28 by Tom Hirschberger (https://github.com/Tom-Hirschberger)
-
   License: MIT
-
 */
 
 // LIBRARY MODIFICATIONS
@@ -32,6 +27,7 @@
 // Caution: You'll need to overwrite the fowlloing in the SparkFun_APDS9960 lib to
 // prevent gesture sensor interrupt when just standing in front of mirror, this will
 // reduce infrared LED power:
+// if you use a third party sensor (not SPARKFUN) make sure to set the GGAIN value to GGAIN_1X
 // #define DEFAULT_GGAIN           GGAIN_2X // was: GGAIN_4X
 // #define DEFAULT_GLDRIVE         LED_DRIVE_50MA // was: LED_DRIVE_100MA
 
@@ -58,11 +54,11 @@ int trigger_one = 3;
 int echo_one = 4;
 int trigger_two = 5;
 int echo_two = 6;
-int max_distance_one = 10;
-int max_distance_two = 10;
+int max_distance_one = 20;
+int max_distance_two = 20;
 unsigned long last_dist_check = millis();
-int ms_between_dist_check = 1000;
-int delay_after_dist_match = 2500;
+int ms_between_dist_check = 500;
+int delay_after_dist_match = 500;
 
 // setup function is called on boot
 void setup() {
