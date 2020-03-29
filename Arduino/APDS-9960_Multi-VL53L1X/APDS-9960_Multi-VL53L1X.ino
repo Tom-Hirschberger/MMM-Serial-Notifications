@@ -11,7 +11,15 @@
 #include <SparkFun_APDS9960.h>
 
 #include <VL53L1X.h>
-The
+#define SENSOR_CNT 3
+#define XSHUT_START_PIN 4 //we start with pin 4 because 2 and 3 are interrupt pins (on the nano)
+#define SENSORS_START_ADDRESS 53 //0x35 next sensor has 0x36, ...
+#define DISTANCE_THRESHOLD 200 //if object is closer than this millimeters an hit will be signaled
+#define DISTANCE_MODE VL53L1X::Long //the sensor supports Short, Mid, Long mode
+#define TIMING_BUDGET 50000
+#define TIMING_CONTINOUES 50
+#define TIMEOUT 100
+#define VL53L1X_DEBOUNCE 1000 //after a hit distance is messarued after this time of milliseconds again
 VL53L1X sensors[SENSOR_CNT];
 unsigned long sensorsLastHit[SENSOR_CNT];
 
@@ -42,6 +50,8 @@ unsigned long sensorsLastHit[SENSOR_CNT];
 
 // gesture sensor interrup pin
 #define APDS9960_INT    2 // Needs to be an interrupt pin
+#define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
+unsigned long APDS9960LastHit = 0;
 
 // GLOBAL VARIABLES
 
@@ -198,9 +208,10 @@ void handleInterrupt() {
 
 // interrupt function for interrupt pin that APDS9960 is attached to
 void interruptRoutine() {
-
-  isr_flag = 1;
-
+  unsigned long curTime = millis();
+  if ((curTime - APDS9960LastHit) > APDS9960_DEBOUNCE){
+    isr_flag = 1;  
+  }
 }
 
 // on gestor sensor interrupt send serial message with gesture

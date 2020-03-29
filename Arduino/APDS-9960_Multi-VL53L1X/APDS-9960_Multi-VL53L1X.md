@@ -100,6 +100,10 @@ The interrupt pin of the sensor can be configured by changing the value of
 
     #define APDS9960_INT    2 // Needs to be an interrupt pin
 
+I use a debounce for the APDS-9960 as well to avoid getting no outputs for other sensors because the APDS-9960 sensor is blocked (and produces an NONE gesture then). Interrupts which happen in this time (milliseconds) after the last one will be ignored.
+
+    #define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
+
 
 ## CONCLUSION ##
 If everything went well we do no get gestures and hits transmitted on the serial interface and can react to them on the Raspberry Pi.
