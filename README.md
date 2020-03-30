@@ -37,16 +37,26 @@ The Arduino directory contains examples i had written for my Arduino UNO R3 and 
                 payload: true
               }
             ],
-          'Gesture: DOWN': [
+            'Gesture: DOWN': [
               {
                 notification: 'VOLUME_DOWN',
                 payload: {
-                step: 2
+                  step: 2
                 }
               },
               {
                 notification: 'USER_PRESENCE',
                 payload: true
+              }
+            ],
+            'AmbientLight: ': [
+              {
+                notification: 'AMBIENT_LIGHT',
+								payloadReplacement: '###VALUE###',
+								replacementPrefix: 'AmbientLight: ',
+								payload: {
+										value: '###VALUE###'
+								}
               }
             ]
           }

@@ -47,8 +47,30 @@ module.exports = NodeHelper.create({
               var payload = {}
             } else {
               var payload = self.config.devices[curDev].messages[curExptMessage][curNotification].payload
+              if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement !== 'undefined'){
+                var payloadReplacementString = self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement
+                if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix !== 'undefined'){
+                  replacementPrefix = self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix
+                } else {
+                  replacementPrefix = ""
+                }
+
+                var curReplacementValue = curData.substring(replacementPrefix.length-1,curData.length-1)
+                
+                var newPayload = {}
+                for(var curPayloadKey in payload){
+                  var curPayloadValue = payload[curPayloadKey]
+                  if(typeof curPayloadValue === 'string'){
+                    newPayload[curPayloadKey] = curPayloadValue.replace(payloadReplacementString,curReplacementValue)
+                  } else {
+                    newPayload[curPayloadKey] = curPayloadValue
+                  }
+                }
+
+                payload = newPayload
+              }
             }
-            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,payload)
+            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,newPayload)
           }
         }
       }

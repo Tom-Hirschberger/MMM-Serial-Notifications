@@ -105,7 +105,11 @@ I use a debounce for the APDS-9960 as well to avoid getting no outputs for other
 
     #define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
 
+The APDS-9960 has an ambient light sensor we use to send the current light intensity in intervals. The interval is configured with the following value:
+
+    #define APDS9960_AMBIENTLIGHT_INTERVAL 10000 //Time between two accepted interrupts
+
 
 ## CONCLUSION ##
 If everything went well we do now get gestures and hits transmitted on the serial interface and can react to them on the Raspberry Pi.
-If a hit happend for a VL53L1X sensor hits during the DEBOUNCE period will be ignored.
+If a hit happend for a VL53L1X sensor hits during the DEBOUNCE period will be ignored. Also in periodic intervals the current ambient light value will be transmitted.

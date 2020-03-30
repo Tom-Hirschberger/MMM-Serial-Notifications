@@ -51,7 +51,10 @@ unsigned long sensorsLastHit[SENSOR_CNT];
 // gesture sensor interrup pin
 #define APDS9960_INT    2 // Needs to be an interrupt pin
 #define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
+#define APDS9960_AMBIENTLIGHT_INTERVAL 10000 //Time between two accepted interrupts
 unsigned long APDS9960LastHit = 0;
+unsigned long APDS9960LastAmbientLight = 0;
+uint16_t APDS9960AmbientLight = 0;
 
 // GLOBAL VARIABLES
 
@@ -116,7 +119,8 @@ void setup() {
     if (gestureSensor.init()) {
       
       Serial.println(F("INFO: APDS-9960 initialization complete"));
-    
+
+      gestureSensor.enableLightSensor(false);
       attachInterrupt(digitalPinToInterrupt(APDS9960_INT), interruptRoutine, FALLING);
     
       if (gestureSensor.enableGestureSensor(true)) {
@@ -178,9 +182,19 @@ void loop() {
       
       delay(200);
     }
-  }
+  }  
   
   if (gesture_ready){
+    unsigned long curTime = millis();
+    if((curTime - APDS9960LastAmbientLight) > APDS9960_AMBIENTLIGHT_INTERVAL){
+      if(!gestureSensor.readAmbientLight(APDS9960AmbientLight)){
+        Serial.print("Problem with AmbientLight");
+      } else {
+        Serial.print("AmbientLight: ");
+        Serial.println(APDS9960AmbientLight);
+        APDS9960LastAmbientLight = curTime;
+      }
+    }
     // check if there was an interrupt in the meantime
     handleInterrupt();
   }
