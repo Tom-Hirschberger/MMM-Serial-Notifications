@@ -43,9 +43,10 @@ I use the APDS Library of SparkFun (https://github.com/sparkfun/SparkFun_APDS-99
 
 Because i do not use an original SparkFun Sensor i needed to modify some things in the library.
 Open the ".h"-file of the library usally located in (~/Arduino/libraries/SparkFun_APDS-9960_Sensor_Arduino_Library-XXXX/src/SparkFun_APDS9960.h) where XXXX is the version number.
+GGAIN and GLDRIVE control the sensivity of the sensor.
 
 ##### GGAIN #####
-The GGAIN value controls Most of the third party sensors do not support GGAIN values of 4X, some only support 1X. I could not get any single gesture without changing this value.
+Most of the third party sensors do not support GGAIN values of 4X, some only support 1X. I could not get any single gesture without changing this value. Thanks to (http://wolles-elektronikkiste.de/apds-9960-das-multitalent).
 
 Change to line
 
@@ -106,5 +107,5 @@ I use a debounce for the APDS-9960 as well to avoid getting no outputs for other
 
 
 ## CONCLUSION ##
-If everything went well we do no get gestures and hits transmitted on the serial interface and can react to them on the Raspberry Pi.
+If everything went well we do now get gestures and hits transmitted on the serial interface and can react to them on the Raspberry Pi.
 If a hit happend for a VL53L1X sensor hits during the DEBOUNCE period will be ignored.
