@@ -70,7 +70,7 @@ module.exports = NodeHelper.create({
                 payload = newPayload
               }
             }
-            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,newPayload)
+            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,payload)
           }
         }
       }
