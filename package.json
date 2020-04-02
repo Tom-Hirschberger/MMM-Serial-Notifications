@@ -1,6 +1,6 @@
 {
   "name": "MMM-Serial-Notifications",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "MMM-Serial-Notifications.js",
   "devDependencies": {},
