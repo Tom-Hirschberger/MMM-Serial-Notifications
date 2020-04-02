@@ -13,6 +13,8 @@ module.exports = NodeHelper.create({
 
   start: function () {
     this.started = false
+    this.currentProfile = ''
+    this.currentProfilePattern = new RegExp('.*')
   },
 
   socketNotificationReceived: function (notification, payload) {
@@ -34,43 +36,55 @@ module.exports = NodeHelper.create({
         
       }
       self.started = true
+    } else if (notification === 'CHANGED_PROFILE'){
+      if(typeof payload.to !== 'undefined'){
+        self.currentProfile = payload.to
+        self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
+      }
     }
   },
 
   sendAllNotifications: function (curDev, curData) {
     const self = this
+    console.log("("+curDev+") Received: "+curData)
     for(var curExptMessage in self.config.devices[curDev].messages){
       if(curData.indexOf(curExptMessage) == 0){
         for(var curNotification in self.config.devices[curDev].messages[curExptMessage]){
-          if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].notification !== 'undefined'){
-            if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payload === 'undefined'){
-              var payload = {}
-            } else {
-              var payload = self.config.devices[curDev].messages[curExptMessage][curNotification].payload
-              if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement !== 'undefined'){
-                var payloadReplacementString = self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement
-                if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix !== 'undefined'){
-                  replacementPrefix = self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix
-                } else {
-                  replacementPrefix = ""
-                }
-
-                var curReplacementValue = curData.substring(replacementPrefix.length-1,curData.length-1)
-                
-                var newPayload = {}
-                for(var curPayloadKey in payload){
-                  var curPayloadValue = payload[curPayloadKey]
-                  if(typeof curPayloadValue === 'string'){
-                    newPayload[curPayloadKey] = curPayloadValue.replace(payloadReplacementString,curReplacementValue)
+          console.log(self.currentProfilePattern.toString())
+          if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].profiles === 'undefined' || 
+            self.currentProfilePattern.test(self.config.devices[curDev].messages[curExptMessage][curNotification].profiles)){
+            if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].notification !== 'undefined'){
+              if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payload === 'undefined'){
+                var payload = {}
+              } else {
+                var payload = self.config.devices[curDev].messages[curExptMessage][curNotification].payload
+                if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement !== 'undefined'){
+                  var payloadReplacementString = self.config.devices[curDev].messages[curExptMessage][curNotification].payloadReplacement
+                  if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix !== 'undefined'){
+                    replacementPrefix = self.config.devices[curDev].messages[curExptMessage][curNotification].replacementPrefix
                   } else {
-                    newPayload[curPayloadKey] = curPayloadValue
+                    replacementPrefix = ""
                   }
-                }
 
-                payload = newPayload
+                  var curReplacementValue = curData.substring(replacementPrefix.length-1,curData.length-1)
+                  
+                  var newPayload = {}
+                  for(var curPayloadKey in payload){
+                    var curPayloadValue = payload[curPayloadKey]
+                    if(typeof curPayloadValue === 'string'){
+                      newPayload[curPayloadKey] = curPayloadValue.replace(payloadReplacementString,curReplacementValue)
+                    } else {
+                      newPayload[curPayloadKey] = curPayloadValue
+                    }
+                  }
+
+                  payload = newPayload
+                }
               }
+              self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,payload)
             }
-            self.sendSocketNotification(self.config.devices[curDev].messages[curExptMessage][curNotification].notification,payload)
+          } else {
+            console.log("Skipped because profile string is present but does not match")
           }
         }
       }
