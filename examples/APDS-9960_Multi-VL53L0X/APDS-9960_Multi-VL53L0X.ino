@@ -14,7 +14,8 @@
 #define SENSOR_CNT 5
 #define XSHUT_START_PIN 4 //we start with pin 4 because 2 and 3 are interrupt pins (on the nano)
 #define SENSORS_START_ADDRESS 45 //0x35 next sensor has 0x36, ...
-#define DISTANCE_THRESHOLD 75 //if object is closer than this millimeters an hit will be signaled
+#define DISTANCE_MAX_THRESHOLD 75 //if object is closer than this millimeters an hit will be signaled
+#define DISTANCE_MIN_THRESHOLD 10
 #define TIMING_BUDGET 50000
 #define TIMING_CONTINOUES 50
 #define TIMEOUT 100
@@ -41,7 +42,7 @@ unsigned long sensorsLastHit[SENSOR_CNT];
 // prevent gesture sensor interrupt when just standing in front of mirror, this will
 // reduce infrared LED power:
 // if you use a third party sensor (not SPARKFUN) make sure to set the GGAIN value to GGAIN_1X
-// #define DEFAULT_GGAIN           GGAIN_2X // was: GGAIN_4X
+// #define DEFAULT_GGAIN           GGAIN_1X // was: GGAIN_4X
 // #define DEFAULT_GLDRIVE         LED_DRIVE_50MA // was: LED_DRIVE_100MA
 
 
@@ -80,7 +81,7 @@ void setup() {
   }
   
    // Initalisiert I2C
-  delay(500);
+  delay(200);
   Wire.begin();
   Wire.beginTransmission(0x29);
   
@@ -89,12 +90,12 @@ void setup() {
   for (int i = 0; i < SENSOR_CNT; i++)
   {
     digitalWrite(XSHUT_START_PIN + i,HIGH);
-    delay(500);
+    delay(50);
     sensors[i].init();
     Serial.print("VL53L0X");
     Serial.print(i);
     Serial.println(" - SetAdress");
-    delay(500);
+    delay(150);
     sensors[i].setAddress(SENSORS_START_ADDRESS+i);
     Serial.print("VL53L0X");
     Serial.print(i);
@@ -166,19 +167,20 @@ void loop() {
   {
     if ((curTime - sensorsLastHit[i]) > VL53L0X_DEBOUNCE){
       uint16_t curValue = sensors[i].readRangeContinuousMillimeters();
-      if (curValue <= DISTANCE_THRESHOLD){
+      if ((curValue > DISTANCE_MIN_THRESHOLD)&&(curValue <= DISTANCE_MAX_THRESHOLD)){
         Serial.print("VL53L0X");
         Serial.print(i);
         if (sensors[i].timeoutOccurred()) { 
           Serial.print(": TIMEOUT"); 
         } else {
-          Serial.print(": HIT");
+          Serial.print(": HIT -> ");
+          Serial.print(curValue);
           sensorsLastHit[i] = curTime;
         }
         Serial.println();
       } 
       
-      delay(200);
+      delay(100);
     }
   }  
   

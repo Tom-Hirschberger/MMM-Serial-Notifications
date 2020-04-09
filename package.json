@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "serialport": "latest",
-    "electron-rebuild": "^1.2.1"
+    "electron-rebuild": "latest"
   },
   "repository": {
     "type": "git",
