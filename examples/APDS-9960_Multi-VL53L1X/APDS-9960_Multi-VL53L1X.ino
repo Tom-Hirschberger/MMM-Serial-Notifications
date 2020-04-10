@@ -14,7 +14,7 @@
 #define SENSOR_CNT 3
 #define XSHUT_START_PIN 4 //we start with pin 4 because 2 and 3 are interrupt pins (on the nano)
 #define SENSORS_START_ADDRESS 53 //0x35 next sensor has 0x36, ...
-#define DISTANCE_MAX_THRESHOLD 75 //if object is closer than this millimeters an hit will be signaled
+#define DISTANCE_MAX_THRESHOLD 100 //if object is closer than this millimeters an hit will be signaled
 #define DISTANCE_MIN_THRESHOLD 10
 #define DISTANCE_MODE VL53L1X::Long //the sensor supports Short, Mid, Long mode
 #define TIMING_BUDGET 50000
@@ -181,7 +181,7 @@ void loop() {
         Serial.println();
       } 
       
-      delay(200);
+      delay(100);
     }
   }  
   
