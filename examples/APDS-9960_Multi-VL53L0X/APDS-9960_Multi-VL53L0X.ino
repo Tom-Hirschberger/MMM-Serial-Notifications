@@ -19,7 +19,7 @@
 #define TIMING_BUDGET 50000
 #define TIMING_CONTINOUES 50
 #define TIMEOUT 100
-#define VL53L0X_DEBOUNCE 1500 //after a hit distance is messarued after this time of milliseconds again
+#define VL53L0X_DEBOUNCE 500 //after a hit distance is messarued after this time of milliseconds again
 VL53L0X sensors[SENSOR_CNT];
 unsigned long sensorsLastHit[SENSOR_CNT];
 
