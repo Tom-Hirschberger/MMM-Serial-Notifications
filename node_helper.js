@@ -50,7 +50,7 @@ module.exports = NodeHelper.create({
     for(var curExptMessage in self.config.devices[curDev].messages){
       if(curData.indexOf(curExptMessage) == 0){
         for(var curNotification in self.config.devices[curDev].messages[curExptMessage]){
-          console.log(self.currentProfilePattern.toString())
+          // console.log(self.currentProfilePattern.toString())
           if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].profiles === 'undefined' || 
             self.currentProfilePattern.test(self.config.devices[curDev].messages[curExptMessage][curNotification].profiles)){
             if(typeof self.config.devices[curDev].messages[curExptMessage][curNotification].notification !== 'undefined'){

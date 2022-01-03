@@ -1,15 +1,16 @@
 {
   "name": "MMM-Serial-Notifications",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "MMM-Serial-Notifications.js",
   "devDependencies": {},
   "scripts": {
-    "postinstall": "node_modules/.bin/electron-rebuild -e ../../node_modules/electron"
+    "postinstall": "node_modules/.bin/MagicMirror-rebuild"
   },
   "dependencies": {
     "serialport": "latest",
-    "electron-rebuild": "^1.2.1"
+    "electron-rebuild": "latest",
+    "magicmirror-rebuild": "latest"
   },
   "repository": {
     "type": "git",
