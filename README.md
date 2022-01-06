@@ -12,7 +12,7 @@ In newer release also support for profiles has been included. You can add an pro
 ## Installation
 ```sh
   cd ~/MagicMirror/modules
-  git clone git@github.com:Tom-Hirschberger/MMM-Serial-Notifications.git
+  git clone https://github.com/Tom-Hirschberger/MMM-Serial-Notifications.git
   cd MMM-Serial-Notifications
   npm install
 ```
