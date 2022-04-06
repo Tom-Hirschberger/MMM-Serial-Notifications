@@ -6,8 +6,8 @@
  */
 
 const NodeHelper = require('node_helper')
-const Readline = require('@serialport/parser-readline')
-const SerialPort = require("serialport");
+const { ReadlineParser } = require('@serialport/parser-readline')
+const { SerialPort } = require('serialport')
 
 module.exports = NodeHelper.create({
 
@@ -25,10 +25,8 @@ module.exports = NodeHelper.create({
       for (var curUsbDev in self.config.devices){
         (function(innerDev){
           console.log("Creating port for usb dev: "+innerDev)
-          curPort = new SerialPort(innerDev,{
-            baudRate: 9600,
-          })
-          curParser = curPort.pipe(new Readline({ delimiter: '\n' }))
+          let curPort = new SerialPort({ path: innerDev, baudRate: 9600 })
+          curParser = curPort.pipe(new ReadlineParser({ delimiter: '\n' }))
           curParser.on("data", function(data){
             self.sendAllNotifications(innerDev, data)
           });
