@@ -1,15 +1,13 @@
 {
   "name": "MMM-Serial-Notifications",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "MMM-Serial-Notifications.js",
-  "devDependencies": {},
   "scripts": {
-    "postinstall": "node_modules/.bin/MagicMirror-rebuild"
+    "postinstall": "./postinstall"
   },
   "dependencies": {
-    "serialport": "latest",
-    "magicmirror-rebuild": "latest"
+    "serialport": "latest"
   },
   "repository": {
     "type": "git",

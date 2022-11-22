@@ -10,6 +10,9 @@ The example directory contains some implementations i use for my arduino boards 
 In newer release also support for profiles has been included. You can add an profiles string to each notification. This makes it possible to use the same sensors for different purposes in different profiles. (i.e. use the APDS-9960 either to control the MMM-Spotify module and in a different page to control i.e. a radio plugin or something totally different).
 
 ## Installation
+
+The postinstallation step takes some time. Please wait for it to finish!
+
 ```sh
   cd ~/MagicMirror/modules
   git clone https://github.com/Tom-Hirschberger/MMM-Serial-Notifications.git
