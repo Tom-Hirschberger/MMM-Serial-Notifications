@@ -14,12 +14,11 @@
 #define SENSOR_CNT 5
 #define XSHUT_START_PIN 4 //we start with pin 4 because 2 and 3 are interrupt pins (on the nano)
 #define SENSORS_START_ADDRESS 45 //0x35 next sensor has 0x36, ...
-#define DISTANCE_MAX_THRESHOLD 75 //if object is closer than this millimeters an hit will be signaled
+#define DISTANCE_MAX_THRESHOLD 150 //if object is closer than this millimeters an hit will be signaled
 #define DISTANCE_MIN_THRESHOLD 10
 #define TIMING_BUDGET 50000
-#define TIMING_CONTINOUES 50
 #define TIMEOUT 100
-#define VL53L0X_DEBOUNCE 500 //after a hit distance is messarued after this time of milliseconds again
+#define VL53L0X_DEBOUNCE 300 //after a hit distance is messarued after this time of milliseconds again
 VL53L0X sensors[SENSOR_CNT];
 unsigned long sensorsLastHit[SENSOR_CNT];
 
@@ -36,21 +35,8 @@ unsigned long sensorsLastHit[SENSOR_CNT];
   License: MIT
 */
 
-// LIBRARY MODIFICATIONS
-
-// Caution: You'll need to overwrite the fowlloing in the SparkFun_APDS9960 lib to
-// prevent gesture sensor interrupt when just standing in front of mirror, this will
-// reduce infrared LED power:
-// if you use a third party sensor (not SPARKFUN) make sure to set the GGAIN value to GGAIN_1X
-// #define DEFAULT_GGAIN           GGAIN_1X // was: GGAIN_4X
-// #define DEFAULT_GLDRIVE         LED_DRIVE_50MA // was: LED_DRIVE_100MA
-
-
-// PINS
-
 // gesture sensor interrup pin
 #define APDS9960_INT    2 // Needs to be an interrupt pin
-#define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
 #define APDS9960_AMBIENTLIGHT_INTERVAL 60000 //Time between two accepted interrupts
 unsigned long APDS9960LastHit = 0;
 unsigned long APDS9960LastAmbientLight = 0;
@@ -60,15 +46,6 @@ uint16_t APDS9960AmbientLight = 0;
 
 // gesture sensor
 SparkFun_APDS9960 gestureSensor = SparkFun_APDS9960();
-
-
-// CONSTANTS
-
-// STATE
-
-// interrupt was received and gesture should be read from sensor
-int isr_flag = 0;
-int gesture_ready = false;
 
 // setup function is called on boot
 void setup() {
@@ -105,8 +82,10 @@ void setup() {
   for (int i = 0; i < SENSOR_CNT; i++)
   {
     sensors[i].setMeasurementTimingBudget(TIMING_BUDGET);
-    sensors[i].startContinuous(TIMING_CONTINOUES);
     sensors[i].setTimeout(TIMEOUT);
+    sensors[i].setSignalRateLimit(0.40);
+    sensors[i].setVcselPulsePeriod(VL53L0X::VcselPeriodPreRange, 10);
+    sensors[i].setVcselPulsePeriod(VL53L0X::VcselPeriodFinalRange, 8);
   }
 
   if(APDS9960_INT > 0){
@@ -114,21 +93,23 @@ void setup() {
 
     // Set interrupt pin as input for gesture sensor
     pinMode(APDS9960_INT, INPUT);
+
     // Initialize gesture sensor APDS-9960 (configure I2C and initial values)
     if (gestureSensor.init()) {
-      
       Serial.println(F("INFO: APDS-9960 initialization complete"));
 
+      gestureSensor.setLEDDrive(LED_DRIVE_50MA);
+      gestureSensor.setGestureLEDDrive(LED_DRIVE_50MA);
+
+      gestureSensor.setGestureGain(GGAIN_2X);
+
       gestureSensor.enableLightSensor(false);
-      attachInterrupt(digitalPinToInterrupt(APDS9960_INT), interruptRoutine, FALLING);
     
       if (gestureSensor.enableGestureSensor(true)) {
         Serial.println(F("INFO: Gesture sensor is now running"));
       } else {
         Serial.println(F("ERROR: Something went wrong during gesture sensor enable!"));
       }
-      
-      gesture_ready = true;
     } else {
       Serial.println(F("ERROR: Something went wrong during APDS-9960 init!"));
     }
@@ -166,7 +147,7 @@ void loop() {
   for (int i = 0; i < SENSOR_CNT; i++)
   {
     if ((curTime - sensorsLastHit[i]) > VL53L0X_DEBOUNCE){
-      uint16_t curValue = sensors[i].readRangeContinuousMillimeters();
+      uint16_t curValue = sensors[i].readRangeSingleMillimeters();
       if ((curValue > DISTANCE_MIN_THRESHOLD)&&(curValue <= DISTANCE_MAX_THRESHOLD)){
         Serial.print("VL53L0X");
         Serial.print(i);
@@ -178,61 +159,28 @@ void loop() {
           sensorsLastHit[i] = curTime;
         }
         Serial.println();
-      } 
-      
+      }
       delay(100);
     }
   }  
   
-  if (gesture_ready){
-    unsigned long curTime = millis();
-    if((curTime - APDS9960LastAmbientLight) > APDS9960_AMBIENTLIGHT_INTERVAL){
-      if(!gestureSensor.readAmbientLight(APDS9960AmbientLight)){
-        Serial.print("Problem with AmbientLight");
-      } else {
-        Serial.print("AmbientLight: ");
-        Serial.println(APDS9960AmbientLight);
-        APDS9960LastAmbientLight = curTime;
-      }
-    }
-    // check if there was an interrupt in the meantime
-    handleInterrupt();
-  }
-}
-
-// check for interrupt, if one is present it means gesture is present,
-// in that case stop interrupt handler, handle gesture and attach
-// interrupt handler again
-void handleInterrupt() {
-
-  // if interrupt was set, read and print gesture, reset interrupt flag
-  if (isr_flag == 1) {
-
-    detachInterrupt(digitalPinToInterrupt(APDS9960_INT));
-
+  if (gestureSensor.isGestureAvailable()){
     handleGesture();
-
-    isr_flag = 0;
-
-    attachInterrupt(digitalPinToInterrupt(APDS9960_INT), interruptRoutine, FALLING);
-
   }
 
-}
-
-// interrupt function for interrupt pin that APDS9960 is attached to
-void interruptRoutine() {
-  unsigned long curTime = millis();
-  if ((curTime - APDS9960LastHit) > APDS9960_DEBOUNCE){
-    isr_flag = 1;  
+  if((curTime - APDS9960LastAmbientLight) > APDS9960_AMBIENTLIGHT_INTERVAL){
+    if(!gestureSensor.readAmbientLight(APDS9960AmbientLight)){
+      Serial.print("Problem with AmbientLight");
+    } else {
+      Serial.print("AmbientLight: ");
+      Serial.println(APDS9960AmbientLight);
+      APDS9960LastAmbientLight = curTime;
+    }
   }
 }
 
 // on gestor sensor interrupt send serial message with gesture
 void handleGesture() {
-
-  if (gestureSensor.isGestureAvailable()) {
-
     switch (gestureSensor.readGesture()) {
       case DIR_UP:
         Serial.println(F("Gesture: UP"));
@@ -255,7 +203,4 @@ void handleGesture() {
       default:
         Serial.println(F("Gesture: NONE"));
     }
-
-  }
-
 }
