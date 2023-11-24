@@ -41,33 +41,11 @@ I assume that you already installed the Arduino IDE. If not follow the informati
 #### APDS-9660 Library ####
 I use the APDS Library of SparkFun (https://github.com/sparkfun/SparkFun_APDS-9960_Sensor_Arduino_Library). Follow the instractions on GitHub to install the library.
 
-Because i do not use an original SparkFun Sensor i needed to modify some things in the library.
-Open the ".h"-file of the library usally located in (~/Arduino/libraries/SparkFun_APDS-9960_Sensor_Arduino_Library-XXXX/src/SparkFun_APDS9960.h) where XXXX is the version number.
-GGAIN and GLDRIVE control the sensivity of the sensor.
-
 ##### GGAIN #####
 Most of the third party sensors do not support GGAIN values of 4X, some only support 1X. I could not get any single gesture without changing this value. Thanks to (http://wolles-elektronikkiste.de/apds-9960-das-multitalent).
 
-Change to line
-
-    #define DEFAULT_GGAIN           GGAIN_4X
-
-to
-
-    #define DEFAULT_GGAIN           GGAIN_1X
-
-
 ##### GLDRIVE #####
 The GLDRIVE value controls the power of the led that is used to recognize the gestures. You can control the sensivity of the sensor with this definition. I reduced the power to reduce the count of "wrong" interrupts.
-
-Change the line
-
-    #define DEFAULT_GLDRIVE         LED_DRIVE_100MA
-
-to
-
-    #define DEFAULT_GLDRIVE         LED_DRIVE_50MA
-
 
 #### VL53L1X ####
 I use sensors of Pololu and the library for them can be installed with the library mangement of the Arduino IDE or via https://github.com/pololu/vl53l0x-arduino. I do not know if third party sensors do support all the features like setting the I2C adress (Tested TECNOIOT sensors as well, they work perfactly)!
@@ -88,22 +66,16 @@ It assumes that you connect the XSHUT pins to consecutive digital pins of the Ar
     #define SENSOR_CNT 3 //How many sensors are connected
     #define XSHUT_START_PIN 4 //we start with pin 4 because 2 and 3 are interrupt pins (on the nano)
     #define SENSORS_START_ADDRESS 53 //0x35 next sensor has 0x36, ...
-    #define DISTANCE_THRESHOLD 75 //if object is closer than this millimeters an hit will be signaled
-    #define DISTANCE_MODE VL53L1X::Long //the sensor supports Short, Mid, Long mode
+    #define DISTANCE_THRESHOLD 150 //if object is closer than this millimeters an hit will be signaled
     #define TIMING_BUDGET 50000
-    #define TIMING_CONTINOUES 50
     #define TIMEOUT 100
-    #define VL53L0X_DEBOUNCE 1500 //after a hit distance is messarued after this time of milliseconds again
+    #define VL53L0X_DEBOUNCE 300 //after a hit distance is messarued after this time of milliseconds again
 
 
 ### APDS-9960 ###
 The interrupt pin of the sensor can be configured by changing the value of 
 
     #define APDS9960_INT    2 // Needs to be an interrupt pin
-
-I use a debounce for the APDS-9960 as well to avoid getting no outputs for other sensors because the APDS-9960 sensor is blocked (and produces an NONE gesture then). Interrupts which happen in this time (milliseconds) after the last one will be ignored.
-
-    #define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
 
 The APDS-9960 has an ambient light sensor we use to send the current light intensity in intervals. The interval is configured with the following value:
 

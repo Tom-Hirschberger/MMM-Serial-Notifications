@@ -41,33 +41,11 @@ I assume that you already installed the Arduino IDE. If not follow the informati
 #### APDS-9660 Library ####
 I use the APDS Library of SparkFun (https://github.com/sparkfun/SparkFun_APDS-9960_Sensor_Arduino_Library). Follow the instractions on GitHub to install the library.
 
-Because i do not use an original SparkFun Sensor i needed to modify some things in the library.
-Open the ".h"-file of the library usally located in (~/Arduino/libraries/SparkFun_APDS-9960_Sensor_Arduino_Library-XXXX/src/SparkFun_APDS9960.h) where XXXX is the version number.
-GGAIN and GLDRIVE control the sensivity of the sensor.
-
 ##### GGAIN #####
 Most of the third party sensors do not support GGAIN values of 4X, some only support 1X. I could not get any single gesture without changing this value. Thanks to (http://wolles-elektronikkiste.de/apds-9960-das-multitalent).
 
-Change to line
-
-    #define DEFAULT_GGAIN           GGAIN_4X
-
-to
-
-    #define DEFAULT_GGAIN           GGAIN_1X
-
-
 ##### GLDRIVE #####
 The GLDRIVE value controls the power of the led that is used to recognize the gestures. You can control the sensivity of the sensor with this definition. I reduced the power to reduce the count of "wrong" interrupts.
-
-Change the line
-
-    #define DEFAULT_GLDRIVE         LED_DRIVE_100MA
-
-to
-
-    #define DEFAULT_GLDRIVE         LED_DRIVE_50MA
-
 
 #### VL53L1X ####
 I use sensors of Pololu and the library for them can be installed with the library mangement of the Arduino IDE or via https://github.com/pololu/vl53l1x-arduino. I do not know if third party sensors do support all the features like setting the I2C adress!
@@ -101,13 +79,9 @@ The interrupt pin of the sensor can be configured by changing the value of
 
     #define APDS9960_INT    2 // Needs to be an interrupt pin
 
-I use a debounce for the APDS-9960 as well to avoid getting no outputs for other sensors because the APDS-9960 sensor is blocked (and produces an NONE gesture then). Interrupts which happen in this time (milliseconds) after the last one will be ignored.
-
-    #define APDS9960_DEBOUNCE 500 //Time between two accepted interrupts
-
 The APDS-9960 has an ambient light sensor we use to send the current light intensity in intervals. The interval is configured with the following value:
 
-    #define APDS9960_AMBIENTLIGHT_INTERVAL 10000 //Time between two accepted interrupts
+    #define APDS9960_AMBIENTLIGHT_INTERVAL 60000 //Time between two accepted interrupts
 
 
 ## CONCLUSION ##
