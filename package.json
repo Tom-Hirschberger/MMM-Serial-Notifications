@@ -1,11 +1,18 @@
 {
   "name": "MMM-Serial-Notifications",
   "version": "0.0.7",
-  "description": "",
+  "description": "A module to convert messages reseived on serial consoles to notications.",
   "main": "MMM-Serial-Notifications.js",
   "scripts": {
     "postinstall": "./postinstall"
   },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "serial console",
+    "tty",
+    "Notifications"
+  ],
   "dependencies": {
     "serialport": "latest"
   },

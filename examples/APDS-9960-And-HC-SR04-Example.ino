@@ -11,7 +11,7 @@
 #include <SparkFun_APDS9960.h>
 
 /*
-  Magic Mirror 2.0
+  MagicMirror²
   Collects gesture events from gesture sensor APDS-9960 which are then forwarded on the serial port as text.
   The circuit for an Arduino Uno:
   * input 1: APDS-9960 on digital pin 2 (interrupt) + I2C (SDA on pin A4, SCL on pin A5) + GND & VCC (3.3V)
