@@ -11,7 +11,7 @@
 #include <SparkFun_APDS9960.h>
 
 /*
-  Magic Mirror 2.0
+  MagicMirror²
 
   Collects gesture events from gesture sensor APDS-9960 which are then forwarded on the serial port as text.
 

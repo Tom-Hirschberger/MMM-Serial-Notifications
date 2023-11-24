@@ -1,4 +1,4 @@
-/* Magic Mirror
+/* MagicMirror²
  * Module: Serial-Notifications
  *
  * By Tom Hirschberger
