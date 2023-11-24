@@ -1,6 +1,6 @@
 {
   "name": "MMM-Serial-Notifications",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A module to convert messages reseived on serial consoles to notications.",
   "main": "MMM-Serial-Notifications.js",
   "scripts": {
